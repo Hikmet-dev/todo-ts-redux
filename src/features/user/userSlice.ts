@@ -3,20 +3,29 @@ import { RootState, AppThunk } from '../../app/store';
 import { instance } from '../../instance'
 
  
-export const loginUser = createAsyncThunk(
-    'user/login',
-    async (user: {[userData: string]: string}, thinkApi) => {
-        const { data }: any = instance.post('login', user);
-        return data
+
+
+export const fetchUser: any =  createAsyncThunk(
+    'user/fetchToken',
+    async (user: {[userData: string]: string}, thunkAPI) => { 
+        const res = await instance.post(`login`, user);
+        return res.data
     }
-)
+);
+
+export const userRegistration: any = createAsyncThunk(
+    'user/registration',
+    async (user: {[userData: string]: string}, thunkAPI) => {
+        const res = await instance.post(`signup`, user);
+        return res.data 
+    });
 
 export interface User {
-    firstName?: string;
-    lastName?: string;
+    firstName: string;
+    lastName: string;
+    token: string;
     email?: string;
     password?: string;
-    token: string;
     isLoading?: boolean;
     hasError?: boolean;
 }
@@ -37,6 +46,44 @@ export const userSlice = createSlice({
         clearUserData: (state) => {
             state.firstName = state.lastName = state.token = '';
             state.isLoading = state.hasError = false;
+        }
+    },
+    extraReducers: {
+        [fetchUser.pending]: (state) => {
+            state.isLoading = false
+            state.hasError = false
+        },
+        [fetchUser.fulfilled]: (state, action: PayloadAction<User>) => {
+            state.token = action.payload.token;
+            state.firstName = action.payload.firstName;
+            state.lastName = action.payload.lastName;
+            sessionStorage.setItem('token', state.token);
+            sessionStorage.setItem('firstName', state.firstName);
+            sessionStorage.setItem('lastName', state.lastName);
+            state.isLoading = true;
+            state.hasError = false;
+        },
+        [fetchUser.rejected]: (state, action) => {
+            state.isLoading = false;
+            state.hasError = true;
+        },
+        [userRegistration.pending]: (state) => {
+            state.isLoading = false
+            state.hasError = false
+        },
+        [userRegistration.fulfilled]: (state, action: PayloadAction<User>) => {
+            state.token = action.payload.token;
+            state.firstName = action.payload.firstName;
+            state.lastName = action.payload.lastName;
+            sessionStorage.setItem('token', state.token);
+            sessionStorage.setItem('firstName', state.firstName);
+            sessionStorage.setItem('lastName', state.lastName);
+            state.isLoading = true;
+            state.hasError = false;
+        },
+        [userRegistration.rejected]: (state) => {
+            state.isLoading = false;
+            state.hasError = true;
         }
     }
 })
