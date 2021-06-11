@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState, AppThunk } from '../../app/store';
 import { instance } from '../../instance'
 
  
@@ -29,10 +30,23 @@ const initialState: User = {
 };
 
 
-export const userLogin = createSlice({
+export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-
+        clearUserData: (state) => {
+            state.firstName = state.lastName = state.token = '';
+            state.isLoading = state.hasError = false;
+        }
     }
 })
+
+
+export const { clearUserData } = userSlice.actions;
+
+export const selectToken = (state: RootState) => state.user.token;
+export const selectFirstName = (state: RootState) => state.user.firstName;
+export const selectLastName = (state: RootState) => state.user.lastName;
+export const selectIsLoading = (state: RootState) => state.user.isLoading;
+
+export default userSlice.reducer;

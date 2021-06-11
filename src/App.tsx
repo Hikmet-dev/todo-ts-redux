@@ -1,8 +1,9 @@
 import React from 'react';
+import {NavBar} from './componets/NavBar';
 
-function App() {
-  return (<div> 5</div>
-  );
+
+export const App: any = () =>  {
+  return <NavBar />;
 }
 
 export default App;
