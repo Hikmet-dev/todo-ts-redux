@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { TextField } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { createTask } from '../features/task/taskSlice';
@@ -6,22 +6,25 @@ import { createTask } from '../features/task/taskSlice';
 export const  CreateToDo = () =>  {
     const dispatch = useDispatch();
     
-    const [newToDo, setNewToDo] = useState('');
-    const handleNewToDo = (e: any) => {
-        setNewToDo(e.target.value);
+    const handleNewToDo = (e: React.KeyboardEvent<HTMLDivElement> | 
+        React.ChangeEvent<HTMLInputElement>) => {
+            const {key} = (e as React.KeyboardEvent<HTMLDivElement>);
+            const {target} = (e as React.ChangeEvent<HTMLInputElement>);
+            if (key === "Enter") {
+                dispatch(createTask(target.value))
+                target.value = '';
+              }
       };
     return (
         <TextField 
-            id="outlined-basic" 
-            label="New to do" 
-            variant="outlined" 
-            size="small" 
-            fullWidth={true} 
-            type="text" 
-            value={newToDo} 
-            onChange={e => handleNewToDo(e)} 
-            onKeyPress={() => dispatch(createTask(newToDo))} 
-            onKeyUp={e => e.key === "Enter" && setNewToDo('')} 
+        margin='normal'
+        id="outlined-basic" 
+        label="New to do" 
+        variant="outlined" 
+        size="small" 
+        fullWidth 
+        type="text" 
+        onKeyPress={e =>handleNewToDo(e)} 
         />
         )
 }

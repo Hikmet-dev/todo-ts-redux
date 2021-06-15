@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {selectFilterByButtons, selectFilterBy, changeFilterBy } from '../features/filter/filterSlice';
 
 
-export default function DoneSort() {
+export const  DoneSort = () => {
     const filterByButtons = useSelector(selectFilterByButtons);
     const filterBy = useSelector(selectFilterBy);
     const dispatch = useDispatch();

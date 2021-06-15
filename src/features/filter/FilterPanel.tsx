@@ -2,8 +2,8 @@ import React from "react";
 import { Grid, Typography } from "@material-ui/core";
 import { ItemPerPageFilter } from '../../components/ItemPerPageFilter';
 import { makeStyles } from '@material-ui/core/styles';
-import DoneSort from "../../components/DoneSort";
-import DateSort from "../../components/DateSort";
+import {DoneSort} from "../../components/DoneSort";
+import {DateSort} from "../../components/DateSort";
 
 const useStyles = makeStyles((theme) => ({
   root: {

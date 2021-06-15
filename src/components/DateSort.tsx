@@ -1,9 +1,9 @@
 import React from 'react';
 import { ButtonGroup, Button } from '@material-ui/core';
 import {useSelector, useDispatch} from 'react-redux';
-import {selectOrder, selectOrderValue, toggleOrder} from '../features/filter/filterSlice';
+import {selectOrder, selectOrderValue, changeOrder} from '../features/filter/filterSlice';
 
-export default function DateSort() {
+export const DateSort = () =>  {
   const order = useSelector(selectOrder);
   const orderValue = useSelector(selectOrderValue);
   const dispatch = useDispatch();
@@ -15,11 +15,11 @@ export default function DateSort() {
           <Button 
             key={item}
             size="medium"
-            variant={ order === item ? "contained": undefined }
-            onClick={e => dispatch(toggleOrder(e.currentTarget.value))}
+            variant={ order === item ? "contained" : undefined}
+            onClick={e => dispatch(changeOrder(e.currentTarget.value))}
             value={item}
             >{item}</Button>)}
     </ButtonGroup>  
       </>
-    );
-};
+    )
+}

@@ -14,7 +14,7 @@ export const  filterSlice = createSlice({
     name: 'filter',
     initialState,
     reducers: {
-        toggleOrder: (state, action: PayloadAction<string>)=> {
+        changeOrder: (state, action: PayloadAction<string>)=> {
             state.order = action.payload;
         },
         changeFilterBy: (state, action: PayloadAction<string>): any => {
@@ -23,7 +23,7 @@ export const  filterSlice = createSlice({
     }
 });
 
-export const {toggleOrder, changeFilterBy} = filterSlice.actions;
+export const {changeOrder, changeFilterBy} = filterSlice.actions;
 
 export const selectOrderValue = (state: RootState) => state.filter.orderValue;
 export const selectFilterBy = (state: RootState) => state.filter.filterBy;

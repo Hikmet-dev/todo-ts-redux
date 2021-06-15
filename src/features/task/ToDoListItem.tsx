@@ -3,6 +3,9 @@ import { ListItemText , ListItem, ListItemIcon, ListItemSecondaryAction, IconBut
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useDispatch } from 'react-redux';
 import { deleteTask, changeDoneStatus } from './taskSlice';
+import {changeTaskName} from './taskSlice';
+
+
 
 export const ToDoListItem = ({task}: any) => {
   const dispatch = useDispatch();
@@ -14,6 +17,16 @@ export const ToDoListItem = ({task}: any) => {
   const buttonDisabled = () => {
     setDisab(true)
   };
+
+  const changeTask = (e: React.KeyboardEvent<HTMLDivElement> | 
+    React.ChangeEvent<HTMLInputElement>) =>  { 
+      const {key} = (e as React.KeyboardEvent<HTMLDivElement>);
+      const {target} = (e as React.ChangeEvent<HTMLInputElement>);
+      if (key === 'Enter' && target.value.trim()){
+        dispatch(changeTaskName({id: target.name, name: target.value}))
+      }
+  };
+  
 const date = task.createdAt.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/)[0];
 const time = task.createdAt.match(/T(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]))/g)[0].replace('T', '');
  return(
@@ -38,7 +51,7 @@ const time = task.createdAt.match(/T(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]))/g)[0
             name={task.id}
             onBlur={() => showInput()} 
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Escape" && setChangeInput(false)} 
-            // onKeyPress={(e: React.ChangeEvent<HTMLInputElement> ) => (e.key === "Enter" && e.target.value.trim()) && dispatch(changeTaskName({id: e.target.name, name: e.target.value}))}
+            onKeyPress={e => changeTask(e)}
             onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" &&  setChangeInput(false)}
           />) 
         : (<ListItemText  

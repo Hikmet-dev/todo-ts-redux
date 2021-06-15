@@ -9,6 +9,9 @@ import { NavBar } from './components/NavBar';
 import { selectAuthStatus} from './features/auth/authSlice';
 import { selectIsLoading } from './features/user/userSlice';
 import { closeError, selectErrorStatus, selectErrorStatusCode, selectErrorMesage, } from './features/error/errorSlice';
+import {toggleAuthStatus} from './features/auth/authSlice';
+import * as jwt from 'jsonwebtoken';
+
 
 function App() {
   const authStatus = useSelector(selectAuthStatus);
@@ -20,6 +23,8 @@ function App() {
 
   useLayoutEffect(() => {
     if(sessionStorage.getItem('token')) {
+      const token: any = jwt.decode(sessionStorage.token.split(' ')[1]);
+      if(Date.now() > token.exp) dispatch(toggleAuthStatus(true));
       instance.defaults.headers = {'Authorization': sessionStorage.getItem('token')}
     }
   });

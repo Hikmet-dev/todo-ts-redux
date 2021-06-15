@@ -1,4 +1,4 @@
-import React, {  useState,  useLayoutEffect} from  'react';
+import React, {  useState,  useEffect} from  'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Grid, List, CircularProgress} from '@material-ui/core';
 import { CreateToDo }  from '../../components/CreateToDo';
@@ -6,7 +6,7 @@ import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
 import {selectOrder, selectFilterBy} from '../filter/filterSlice';
-import { fetchTask, selectTasks, selectIsLoading, selectPageCount } from './taskSlice';
+import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement } from './taskSlice';
 
 
 
@@ -18,11 +18,10 @@ export const ToDoList = () => {
   const tasks = useSelector(selectTasks);
   const isLoading = useSelector(selectIsLoading);
   const pageCount = useSelector(selectPageCount);
+  const changeElement = useSelector(selectChangeElement);
   const dispatch =useDispatch()
 
-
-  
-  useLayoutEffect(() => {
+  useEffect(() => {
     if(sessionStorage.token) {
       dispatch(fetchTask({
         order,
@@ -31,8 +30,7 @@ export const ToDoList = () => {
         itemPerPage
       }))
     }
-  }, [order, filterBy, activePage, itemPerPage]);
-
+  }, [dispatch, changeElement, order, filterBy, activePage, itemPerPage]);
 
   const clickOnPage = (e: any) => {
     setActivePage(Number(e.currentTarget.value));

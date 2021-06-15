@@ -3,6 +3,7 @@ import { createAsyncThunk, PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { instance } from '../../instance';
 
 
+
 interface Task {
     tasks: {
         id: string;
@@ -16,6 +17,7 @@ interface Task {
 interface TaskList extends Task {
     isLoading: boolean;
     hasError: boolean;
+    changeElement: any;
 };
 
 interface GetParams {
@@ -31,8 +33,8 @@ export const fetchTask: any = createAsyncThunk(
         const res = await instance.get<Task>('tasks', {params: {
             order: params.order,
             filterBy: params.filterBy,
-            activePage: params.activePage,
-            itemPerPage: params.itemPerPage
+            page: params.activePage,
+            taskCount: params.itemPerPage
         }} );
         return res.data
     });
@@ -44,13 +46,14 @@ export const createTask: any = createAsyncThunk(
         return res;
     }
 );
+
 export const changeTaskName: any = createAsyncThunk(
     'task/changeTaskName',
     async (changingName: {id: string, name: string} ) => {
         const res = await instance.patch(`task/${changingName.id}`, {name: changingName.name});
         return res.data;
     }
-)
+);
 
 export const changeDoneStatus: any = createAsyncThunk(
     'task/changeDoneStatus',
@@ -63,7 +66,7 @@ export const changeDoneStatus: any = createAsyncThunk(
 export const deleteTask: any = createAsyncThunk(
     'task/deketetask',
     async(taskId: string) => {
-        const res: any = instance.delete(`task${taskId}`);
+        const res = await instance.delete(`task/${taskId}`);
         return res.data;
     }
 );
@@ -72,7 +75,8 @@ const initialState: TaskList = {
     tasks: [],
     pageCount: 1,
     isLoading: false,
-    hasError: false
+    hasError: false,
+    changeElement: null
 };
 
 export const taskSlice  = createSlice({
@@ -97,13 +101,36 @@ export const taskSlice  = createSlice({
             state.hasError = true;
         },
         [createTask.pending]: (state) => {
-            console.log('dsa');
+
         },
         [createTask.fulfilled]: (state, action: PayloadAction<Task>) => {
-            console.log(action.payload);
-            
+            state.changeElement = !state.changeElement
         },
         [createTask.rejected]: (state) => {
+            state.hasError = true
+        },
+        [changeTaskName.pending]: (state) => {
+        },
+        [changeTaskName.fulfilled]: (state, action: PayloadAction<Task>) => {
+            state.changeElement = !state.changeElement
+        },
+        [changeTaskName.rejected]: (state) => {
+            state.hasError = true;
+        },
+        [changeDoneStatus.pending]: (state) => {
+        },
+        [changeDoneStatus.fulfilled]: (state, action: PayloadAction<Task>) => {
+            state.changeElement = !state.changeElement
+        },
+        [changeDoneStatus.rejected]: (state) => {
+            state.hasError = true
+        },
+        [deleteTask.pending]: (state) => {
+        },
+        [deleteTask.fulfilled]: (state, action: PayloadAction<Task>) => {
+            state.changeElement = !state.changeElement
+        },
+        [deleteTask.rejected]: (state)=> {
             state.hasError = true
         }
     }
@@ -114,5 +141,6 @@ export const taskSlice  = createSlice({
 export const selectTasks = (state: RootState) => state.task.tasks;
 export const selectPageCount = (state: RootState) => state.task.pageCount;
 export const selectIsLoading = (state: RootState) => state.task.isLoading;
+export const selectChangeElement = (state: RootState) => state.task.changeElement;
 
 export default taskSlice.reducer;
