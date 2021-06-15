@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { ListItemText , ListItem, ListItemIcon, ListItemSecondaryAction, IconButton, Checkbox, Input, Grid } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { useDispatch } from 'react-redux';
+import { deleteTask, changeDoneStatus } from './taskSlice';
 
-export const ToDoListItem = ({task, onCheck, onDelete, onChange}) => {
+export const ToDoListItem = ({task}: any) => {
+  const dispatch = useDispatch();
   const [changeInput, setChangeInput] = useState(false);
   const [disab, setDisab] = useState(false);
-  const showInput = (e) => {
+  const showInput = () => {
     setChangeInput(!changeInput)
   }; 
   const buttonDisabled = () => {
     setDisab(true)
-  }
+  };
 const date = task.createdAt.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/)[0];
 const time = task.createdAt.match(/T(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]))/g)[0].replace('T', '');
-console.log(time);
  return(
    <Grid container>
     <ListItem>
@@ -21,7 +23,7 @@ console.log(time);
       <ListItemIcon>
         <Checkbox 
           color="primary"  
-          onChange={onCheck} 
+          onChange={(e)=> dispatch(changeDoneStatus({id: e.target.value, done: e.target.checked}))} 
           checked={task.done} 
           value={task.id} 
         />
@@ -33,15 +35,15 @@ console.log(time);
             fullWidth
             defaultValue={task.name}
             autoFocus={true}
-            name={`${task.id}`}
-            onBlur={e => showInput(e)} 
-            onKeyDown={e => e.key === "Escape" && setChangeInput(false)} 
-            onKeyPress={onChange}
-            onKeyUp={e => e.key === "Enter" && setChangeInput(false)}
+            name={task.id}
+            onBlur={() => showInput()} 
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Escape" && setChangeInput(false)} 
+            // onKeyPress={(e: React.ChangeEvent<HTMLInputElement> ) => (e.key === "Enter" && e.target.value.trim()) && dispatch(changeTaskName({id: e.target.name, name: e.target.value}))}
+            onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" &&  setChangeInput(false)}
           />) 
         : (<ListItemText  
             primary={task.name}  
-            onClick={e => showInput(e)}
+            onClick={() => showInput()}
           />)
       }
       </Grid>
@@ -50,7 +52,12 @@ console.log(time);
         </Grid>
       <Grid item xs={1}>
         <ListItemSecondaryAction>
-                    <IconButton edge="end" disabled={disab} aria-label="delete" onClick={(e) => {onDelete(e); buttonDisabled()}} value={task.id}>
+                    <IconButton 
+                      edge="end" 
+                      disabled={disab} 
+                      aria-label="delete" 
+                      onClick={(e) => {dispatch(deleteTask(e.currentTarget.value)); buttonDisabled()}} 
+                      value={task.id}>
                       <DeleteIcon />
                     </IconButton>
         </ListItemSecondaryAction>

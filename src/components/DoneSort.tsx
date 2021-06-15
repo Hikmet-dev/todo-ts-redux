@@ -15,7 +15,7 @@ export default function DoneSort() {
         <Button 
             key={button}
             size="medium"
-            variant={ filterBy === button && "contained"}
+            variant={ filterBy === button ? "contained": undefined}
             onClick={e => dispatch(changeFilterBy(e.currentTarget.value))}
             value={button}
             >{button}</Button> )}

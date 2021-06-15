@@ -1,11 +1,12 @@
 import React, {  useLayoutEffect } from 'react';
 import {useSelector, useDispatch } from 'react-redux';
-import * as jwt from 'jsonwebtoken';
+import {ToDoList} from './features/task/ToDoList';
+import {Auth} from './features/auth/Auth';
 import { instance } from './instance'; 
 import { Container, Snackbar } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { NavBar } from './components/NavBar';
-import { selectAuthStatus, toggleAuthStatus } from './features/auth/authSlice';
+import { selectAuthStatus} from './features/auth/authSlice';
 import { selectIsLoading } from './features/user/userSlice';
 import { closeError, selectErrorStatus, selectErrorStatusCode, selectErrorMesage, } from './features/error/errorSlice';
 
@@ -19,9 +20,7 @@ function App() {
 
   useLayoutEffect(() => {
     if(sessionStorage.getItem('token')) {
-      const exp = jwt.decode(sessionStorage.getItem('token').split(' ')[1])?.exp
       instance.defaults.headers = {'Authorization': sessionStorage.getItem('token')}
-      if(Date.now() > exp) dispatch(toggleAuthStatus(true))
     }
   });
 
@@ -35,8 +34,7 @@ function App() {
         autoHideDuration={6000} 
         onClose={(event, reason) => dispatch(closeError(reason))}>
           <Alert
-            severity="error" 
-            onClose={(event, reason) => dispatch(closeError(reason))}> 
+            severity="error" > 
             <AlertTitle>{`Error ${errorStatusCode}`}</AlertTitle>
             {errorMessage} 
           </Alert>

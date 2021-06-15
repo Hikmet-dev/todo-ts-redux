@@ -1,35 +1,79 @@
+import { RootState } from './../../app/store';
 import { createAsyncThunk, PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { instance } from '../../instance';
 
 
-
 interface Task {
-    tasks: {}[],
-    pageCount: number,
-    isLoading: boolean,
-    hasError: boolean
-}
-
-
-export const fetchTask: any = createAsyncThunk(
-    'user/fetchToken',
-    async (params:any, thunkAPI) => {
-        const { data }: any = instance.get('tasks', params);
-        return data
-    })
+    tasks: {
+        id: string;
+        name: string;
+        done: boolean;
+        createdAt: string;
+    }[];
+    pageCount: number;
 };
 
+interface TaskList extends Task {
+    isLoading: boolean;
+    hasError: boolean;
+};
 
-const initialState: Task = {
-    tasks = [],
+interface GetParams {
+    order: string;
+    filterBy: string;
+    activePage: number;
+    itemPerPage: number;
+};
+
+export const fetchTask: any = createAsyncThunk(
+    'task/fetchToken',
+    async (params: GetParams) => {
+        const res = await instance.get<Task>('tasks', {params: {
+            order: params.order,
+            filterBy: params.filterBy,
+            activePage: params.activePage,
+            itemPerPage: params.itemPerPage
+        }} );
+        return res.data
+    });
+
+export const createTask: any = createAsyncThunk(
+    'task/createTask',
+    async (task: string) => {
+        const res = await instance.post('task', {name: task, done: false});
+        return res;
+    }
+);
+export const changeTaskName: any = createAsyncThunk(
+    'task/changeTaskName',
+    async (changingName: {id: string, name: string} ) => {
+        const res = await instance.patch(`task/${changingName.id}`, {name: changingName.name});
+        return res.data;
+    }
+)
+
+export const changeDoneStatus: any = createAsyncThunk(
+    'task/changeDoneStatus',
+    async(changingDoneStatus: {id: string, done: boolean}) => {
+        const res = await instance.patch(`task/${changingDoneStatus.id}`, {done: changingDoneStatus.done});
+        return res.data;
+    }
+);
+
+export const deleteTask: any = createAsyncThunk(
+    'task/deketetask',
+    async(taskId: string) => {
+        const res: any = instance.delete(`task${taskId}`);
+        return res.data;
+    }
+);
+
+const initialState: TaskList = {
+    tasks: [],
     pageCount: 1,
     isLoading: false,
     hasError: false
-}
-
-
-
-
+};
 
 export const taskSlice  = createSlice({
     name: 'task',
@@ -39,16 +83,36 @@ export const taskSlice  = createSlice({
     },
     extraReducers: {
         [fetchTask.pending]: (state) => {
-            state.isLoading = true
-            state.hasError = false
+            state.isLoading = false;
+            state.hasError = false;
         },
         [fetchTask.fulfilled]: (state, action: PayloadAction<Task>) => {
             state.tasks = action.payload.tasks;
             state.pageCount = action.payload.pageCount;
-            state.isLoading = false;
+            state.isLoading = true;
             state.hasError = false;
+        },
+        [fetchTask.rejected]: (state) => {
+            state.isLoading = false;
+            state.hasError = true;
+        },
+        [createTask.pending]: (state) => {
+            console.log('dsa');
+        },
+        [createTask.fulfilled]: (state, action: PayloadAction<Task>) => {
+            console.log(action.payload);
+            
+        },
+        [createTask.rejected]: (state) => {
+            state.hasError = true
         }
     }
-}) 
+});
+
+
+
+export const selectTasks = (state: RootState) => state.task.tasks;
+export const selectPageCount = (state: RootState) => state.task.pageCount;
+export const selectIsLoading = (state: RootState) => state.task.isLoading;
 
 export default taskSlice.reducer;

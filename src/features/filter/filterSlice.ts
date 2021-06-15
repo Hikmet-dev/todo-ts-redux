@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState, AppThunk } from '../../app/store';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../../app/store';
 
 
 
@@ -17,13 +17,13 @@ export const  filterSlice = createSlice({
         toggleOrder: (state, action: PayloadAction<string>)=> {
             state.order = action.payload;
         },
-        toggleFilterBy: (state, action: PayloadAction<string>): any => {
+        changeFilterBy: (state, action: PayloadAction<string>): any => {
             state.filterBy = action.payload;
         }
     }
 });
 
-export const {toggleOrder, toggleFilterBy} = filterSlice.actions;
+export const {toggleOrder, changeFilterBy} = filterSlice.actions;
 
 export const selectOrderValue = (state: RootState) => state.filter.orderValue;
 export const selectFilterBy = (state: RootState) => state.filter.filterBy;

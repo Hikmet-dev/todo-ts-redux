@@ -4,6 +4,7 @@ import authClise from '../features/auth/authSlice';
 import userSlice  from '../features/user/userSlice';
 import filterSlice from '../features/filter/filterSlice';
 import errorSlice from '../features/error/errorSlice';
+import taskSlice from '../features/task/taskSlice';
 
 
 export const store = configureStore({
@@ -12,7 +13,8 @@ export const store = configureStore({
     auth: authClise,
     user: userSlice,
     filter: filterSlice,
-    error: errorSlice
+    error: errorSlice,
+    task: taskSlice
   },
 });
 

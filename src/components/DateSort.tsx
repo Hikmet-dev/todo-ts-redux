@@ -15,7 +15,7 @@ export default function DateSort() {
           <Button 
             key={item}
             size="medium"
-            variant={ order === item && "contained"}
+            variant={ order === item ? "contained": undefined }
             onClick={e => dispatch(toggleOrder(e.currentTarget.value))}
             value={item}
             >{item}</Button>)}

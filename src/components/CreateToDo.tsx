@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { TextField } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import { createTask } from '../features/task/taskSlice';
 
-export const  CreateToDo: any = ({onKeyPress}: any) =>  {
+export const  CreateToDo = () =>  {
+    const dispatch = useDispatch();
+    
     const [newToDo, setNewToDo] = useState('');
     const handleNewToDo = (e: any) => {
         setNewToDo(e.target.value);
@@ -16,7 +20,7 @@ export const  CreateToDo: any = ({onKeyPress}: any) =>  {
             type="text" 
             value={newToDo} 
             onChange={e => handleNewToDo(e)} 
-            onKeyPress={onKeyPress} 
+            onKeyPress={() => dispatch(createTask(newToDo))} 
             onKeyUp={e => e.key === "Enter" && setNewToDo('')} 
         />
         )
