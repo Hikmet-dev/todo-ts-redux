@@ -2,8 +2,6 @@ import { RootState } from './../../app/store';
 import { createAsyncThunk, PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { instance } from '../../instance';
 
-
-
 interface Task {
     tasks: {
         id: string;
@@ -14,7 +12,7 @@ interface Task {
     pageCount: number;
 };
 
-interface TaskList extends Task {
+interface TaskState extends Task {
     isLoading: boolean;
     hasError: boolean;
     changeElement: any;
@@ -43,7 +41,7 @@ export const createTask: any = createAsyncThunk(
     'task/createTask',
     async (task: string) => {
         const res = await instance.post('task', {name: task, done: false});
-        return res;
+        return res.data;
     }
 );
 
@@ -71,7 +69,7 @@ export const deleteTask: any = createAsyncThunk(
     }
 );
 
-const initialState: TaskList = {
+const initialState: TaskState = {
     tasks: [],
     pageCount: 1,
     isLoading: false,
@@ -101,9 +99,9 @@ export const taskSlice  = createSlice({
             state.hasError = true;
         },
         [createTask.pending]: (state) => {
-
+            state.isLoading = true;
         },
-        [createTask.fulfilled]: (state, action: PayloadAction<Task>) => {
+        [createTask.fulfilled]: (state) => {
             state.changeElement = !state.changeElement
         },
         [createTask.rejected]: (state) => {
@@ -111,23 +109,25 @@ export const taskSlice  = createSlice({
         },
         [changeTaskName.pending]: (state) => {
         },
-        [changeTaskName.fulfilled]: (state, action: PayloadAction<Task>) => {
+        [changeTaskName.fulfilled]: (state) => {
             state.changeElement = !state.changeElement
         },
         [changeTaskName.rejected]: (state) => {
             state.hasError = true;
         },
         [changeDoneStatus.pending]: (state) => {
+            state.isLoading = true;
         },
-        [changeDoneStatus.fulfilled]: (state, action: PayloadAction<Task>) => {
+        [changeDoneStatus.fulfilled]: (state) => {
             state.changeElement = !state.changeElement
         },
         [changeDoneStatus.rejected]: (state) => {
             state.hasError = true
         },
         [deleteTask.pending]: (state) => {
+            state.isLoading = true;
         },
-        [deleteTask.fulfilled]: (state, action: PayloadAction<Task>) => {
+        [deleteTask.fulfilled]: (state) => {
             state.changeElement = !state.changeElement
         },
         [deleteTask.rejected]: (state)=> {

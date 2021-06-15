@@ -10,7 +10,7 @@ export const  CreateToDo = () =>  {
         React.ChangeEvent<HTMLInputElement>) => {
             const {key} = (e as React.KeyboardEvent<HTMLDivElement>);
             const {target} = (e as React.ChangeEvent<HTMLInputElement>);
-            if (key === "Enter") {
+            if (key === "Enter" && target.value.trim()) {
                 dispatch(createTask(target.value))
                 target.value = '';
               }
