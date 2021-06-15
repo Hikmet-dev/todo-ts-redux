@@ -9,7 +9,7 @@ import { toggleAuthStatus } from './authSlice';
 
 
 
-export const LogIn: any = () => {
+export const LogIn = () => {
     const dispatch = useDispatch();
 
     return(

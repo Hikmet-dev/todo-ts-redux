@@ -2,17 +2,21 @@ import { RootState } from './../../app/store';
 import { createAsyncThunk, PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { instance } from '../../instance';
 
-interface Task {
-    tasks: {
+export interface Task {
         id: string;
         name: string;
         done: boolean;
         createdAt: string;
-    }[];
+}
+
+
+
+export interface Tasks {
+    tasks: Task[];
     pageCount: number;
 };
 
-interface TaskState extends Task {
+interface TaskState extends Tasks {
     isLoading: boolean;
     hasError: boolean;
     changeElement: any;
@@ -88,7 +92,7 @@ export const taskSlice  = createSlice({
             state.isLoading = false;
             state.hasError = false;
         },
-        [fetchTask.fulfilled]: (state, action: PayloadAction<Task>) => {
+        [fetchTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
             state.tasks = action.payload.tasks;
             state.pageCount = action.payload.pageCount;
             state.isLoading = true;

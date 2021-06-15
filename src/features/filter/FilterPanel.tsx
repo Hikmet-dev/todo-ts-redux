@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
+
 export const FilterPanel = ({onChangeItemFilter, itemPerPage}: any) => {
   const classes = useStyles();
 

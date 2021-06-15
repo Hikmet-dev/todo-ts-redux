@@ -6,8 +6,7 @@ import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
 import {selectOrder, selectFilterBy} from '../filter/filterSlice';
-import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement } from './taskSlice';
-
+import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement, Task } from './taskSlice';
 
 
 export const ToDoList = () => {
