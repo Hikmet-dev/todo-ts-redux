@@ -2,6 +2,7 @@ import React from 'react';
 import { ButtonGroup, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import {selectFilterByButtons, selectFilterBy, changeFilterBy } from '../features/filter/filterSlice';
+import { changeActivePage } from '../features/task/taskSlice';
 
 
 export const  DoneSort = () => {
@@ -16,7 +17,7 @@ export const  DoneSort = () => {
             key={button}
             size="medium"
             variant={ filterBy === button ? "contained": undefined}
-            onClick={e => dispatch(changeFilterBy(e.currentTarget.value))}
+            onClick={e => {dispatch(changeFilterBy(e.currentTarget.value)); dispatch(changeActivePage(1))}}
             value={button}
             >{button}</Button> )}
     </ButtonGroup>

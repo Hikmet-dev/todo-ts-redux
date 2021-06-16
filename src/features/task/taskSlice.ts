@@ -9,8 +9,6 @@ export interface Task {
         createdAt: string;
 }
 
-
-
 export interface Tasks {
     tasks: Task[];
     pageCount: number;

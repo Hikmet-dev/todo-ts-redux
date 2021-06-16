@@ -22,12 +22,13 @@ function App() {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    if(sessionStorage.getItem('token')) {
-      const token = jwt.decode(sessionStorage.token);
-      if (token !== null) {
-        if(Date.now() > token.split(' ')[1].exp) dispatch(toggleAuthStatus(true));
-        instance.defaults.headers = {'Authorization': sessionStorage.getItem('token')}
+    const token = sessionStorage.getItem('token');
+    if(token !== null) {
+      const decode = jwt.decode(token.split(' ')[1]);
+      if (decode !== null && typeof decode !== 'string'){
+       if(Date.now() > decode.exp) dispatch(toggleAuthStatus(true));
       }
+     instance.defaults.headers = {'Authorization': sessionStorage.getItem('token')};
     }
   });
 

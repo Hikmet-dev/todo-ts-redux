@@ -2,9 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { instance } from '../../instance'
 
- 
-
-
 export const fetchUser: any =  createAsyncThunk(
     'user/fetchToken',
     async (user: {[userData: string]: string}, thunkAPI) => { 
@@ -37,7 +34,6 @@ const initialState: User = {
     isLoading: true,
     hasError: false
 };
-
 
 export const userSlice = createSlice({
     name: 'user',
@@ -87,7 +83,6 @@ export const userSlice = createSlice({
         }
     }
 })
-
 
 export const { clearUserData } = userSlice.actions;
 

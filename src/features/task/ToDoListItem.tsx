@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ListItemText , ListItem, ListItemIcon, ListItemSecondaryAction, IconButton, Checkbox, Input, Grid } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useDispatch } from 'react-redux';
-import { deleteTask, changeDoneStatus, Task, Tasks } from './taskSlice';
+import { deleteTask, changeDoneStatus, Task } from './taskSlice';
 import {changeTaskName} from './taskSlice';
 
 export const ToDoListItem = (props: {task: Task} ) => {

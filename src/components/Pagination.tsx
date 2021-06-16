@@ -13,23 +13,28 @@ export const  Pagination = () =>  {
     const activePage = useSelector(selectActivePage);
     const pageCount = useSelector(selectPageCount);
     const pageArr = new Array(pageCount).fill(1).map((e, i) => i + 1);
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        if (typeof e.currentTarget.value === 'string') {
+            dispatch(changeActivePage(Number(e.currentTarget.value)))
+        }
+    };
     return (
         <ButtonGroup
             color="primary" 
             aria-label="contained button group">            
             <Button 
-                onClick={e => dispatch(changeActivePage(Number((e.target as HTMLButtonElement).value)))} 
+                onClick={e => handleClick(e)} 
                 value={1}
                 ><ArrowBackIcon /></Button>
                 {pageArr.map(page => 
                                 <Button 
                                     key={`item-${page}`} 
-                                    onClick={e => dispatch(changeActivePage(Number((e.target as HTMLButtonElement).value)))}
+                                    onClick={e => handleClick(e)}
                                     value={page}
                                     variant={ activePage === page ? 'contained' : undefined}
                                     >{page}</Button>)}
             <Button
-            onClick={e => dispatch(changeActivePage(Number((e.target as HTMLButtonElement).value)))} 
+            onClick={e => handleClick(e)} 
             value={pageArr.length}
             ><ArrowForwardIcon /></Button>
         </ButtonGroup>

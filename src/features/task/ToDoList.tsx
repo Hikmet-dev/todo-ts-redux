@@ -1,12 +1,12 @@
 import React, {  useState,  useEffect} from  'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Container, Grid, List, CircularProgress} from '@material-ui/core';
+import { Container, Grid, List, LinearProgress} from '@material-ui/core';
 import { CreateToDo }  from '../../components/CreateToDo';
 import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
 import {selectOrder, selectFilterBy} from '../filter/filterSlice';
-import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement, selectActivePage, Task, Tasks } from './taskSlice';
+import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement, selectActivePage, Task, changeActivePage } from './taskSlice';
 
 
 export const ToDoList = () => {
@@ -29,11 +29,12 @@ export const ToDoList = () => {
         itemPerPage
       }))
     }
-  }, [dispatch, changeElement, order, filterBy, itemPerPage]);
+  }, [dispatch, changeElement, activePage, order, filterBy, itemPerPage]);
 
 
   const changeItemPerPageFilter = (e: any) => {
-      setItemPerPage(e.target.value)
+      setItemPerPage(e.target.value);
+      dispatch(changeActivePage(1))
   };
 
   return(
@@ -51,7 +52,7 @@ export const ToDoList = () => {
           <List>
       {isLoading
               ?  (tasks.map((task: Task) => <ToDoListItem key={task.id} task={task} />)) 
-              :   <CircularProgress />
+              :   <LinearProgress />
               }
           </List>
         </Grid>
