@@ -6,11 +6,10 @@ import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
 import {selectOrder, selectFilterBy} from '../filter/filterSlice';
-import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement, Task } from './taskSlice';
+import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement, selectActivePage, Task, Tasks } from './taskSlice';
 
 
 export const ToDoList = () => {
-  const [activePage, setActivePage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(5);
   const order = useSelector(selectOrder);
   const filterBy = useSelector(selectFilterBy);
@@ -18,6 +17,7 @@ export const ToDoList = () => {
   const isLoading = useSelector(selectIsLoading);
   const pageCount = useSelector(selectPageCount);
   const changeElement = useSelector(selectChangeElement);
+  const activePage = useSelector(selectActivePage);
   const dispatch =useDispatch()
 
   useEffect(() => {
@@ -29,11 +29,8 @@ export const ToDoList = () => {
         itemPerPage
       }))
     }
-  }, [dispatch, changeElement, order, filterBy, activePage, itemPerPage]);
+  }, [dispatch, changeElement, order, filterBy, itemPerPage]);
 
-  const clickOnPage = (e: any) => {
-    setActivePage(Number(e.currentTarget.value));
-  };
 
   const changeItemPerPageFilter = (e: any) => {
       setItemPerPage(e.target.value)
@@ -49,12 +46,13 @@ export const ToDoList = () => {
               onChangeItemFilter={changeItemPerPageFilter}
               itemPerPage={itemPerPage} />
           <Grid item alignItems="center" container xs={12}>
-              {isLoading && (pageCount > 1 && <Pagination onPageNow={clickOnPage} activePage={activePage} />) }
+              {isLoading && (pageCount > 1 && <Pagination />) }
           </Grid>
           <List>
       {isLoading
-              ?  (tasks.map(task => <ToDoListItem key={task.id} task={task} />)) 
-              :   <CircularProgress />}
+              ?  (tasks.map((task: Task) => <ToDoListItem key={task.id} task={task} />)) 
+              :   <CircularProgress />
+              }
           </List>
         </Grid>
       </Container>

@@ -20,15 +20,15 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 
-export const NavBar: any = () => {
+export const NavBar = () => {
 const LoginForm = useSelector(selectLoginForm);
   const firstName = useSelector(selectFirstName);
   const lastName = useSelector(selectLastName);
   const authStatus = useSelector(selectAuthStatus)
-  const isLoading: any = useSelector(selectIsLoading);
-  const dispatch: any = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
+  const dispatch = useDispatch();
 
-  const classes: any = useStyles();
+  const classes = useStyles();
 
   return(
     <div className={classes.root}>

@@ -2,21 +2,19 @@ import React, { useState } from 'react';
 import { ListItemText , ListItem, ListItemIcon, ListItemSecondaryAction, IconButton, Checkbox, Input, Grid } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useDispatch } from 'react-redux';
-import { deleteTask, changeDoneStatus, Task } from './taskSlice';
+import { deleteTask, changeDoneStatus, Task, Tasks } from './taskSlice';
 import {changeTaskName} from './taskSlice';
 
-
-
-
-export const ToDoListItem = ({task}: Task) => {
+export const ToDoListItem = (props: {task: Task} ) => {
+  const {task} = props;
   const dispatch = useDispatch();
   const [changeInput, setChangeInput] = useState(false);
   const [disab, setDisab] = useState(false);
   const showInput = () => {
-    setChangeInput(!changeInput)
+    setChangeInput(!changeInput);
   }; 
   const buttonDisabled = () => {
-    setDisab(true)
+    setDisab(true);
   };
 
   const changeTask = (e: React.KeyboardEvent<HTMLDivElement> | 
@@ -24,12 +22,14 @@ export const ToDoListItem = ({task}: Task) => {
       const {key} = (e as React.KeyboardEvent<HTMLDivElement>);
       const {target} = (e as React.ChangeEvent<HTMLInputElement>);
       if (key === 'Enter' && target.value.trim()){
-        dispatch(changeTaskName({id: target.name, name: target.value}))
+        dispatch(changeTaskName({id: target.name, name: target.value}));
       }
   };
-  
-const date = task.createdAt.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/)[0];
-const time = task.createdAt.match(/T(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]))/g)[0].replace('T', '');
+
+  const date = task.createdAt.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/);
+  const time = task.createdAt.match(/T(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]))/g);
+  const dateTime: string =  date !== null && time !== null ? `${time[0].replace('T', '')} ${date[0]}`: "Not date";
+
  return(
    <Grid container>
     <ListItem>
@@ -62,7 +62,7 @@ const time = task.createdAt.match(/T(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]))/g)[0
       }
       </Grid>
         <Grid item xs={2}>
-        <ListItemText  primary={`${time} ${date}`} />
+        <ListItemText  primary={dateTime} />
         </Grid>
       <Grid item xs={1}>
         <ListItemSecondaryAction>

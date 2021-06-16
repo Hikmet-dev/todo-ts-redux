@@ -14,6 +14,7 @@ export interface Task {
 export interface Tasks {
     tasks: Task[];
     pageCount: number;
+    activePage: number;
 };
 
 interface TaskState extends Tasks {
@@ -25,7 +26,7 @@ interface TaskState extends Tasks {
 interface GetParams {
     order: string;
     filterBy: string;
-    activePage: number;
+    activePage: string;
     itemPerPage: number;
 };
 
@@ -76,6 +77,7 @@ export const deleteTask: any = createAsyncThunk(
 const initialState: TaskState = {
     tasks: [],
     pageCount: 1,
+    activePage:1, 
     isLoading: false,
     hasError: false,
     changeElement: null
@@ -85,7 +87,9 @@ export const taskSlice  = createSlice({
     name: 'task',
     initialState,
     reducers: {
-
+        changeActivePage: (state, action: PayloadAction<number>) => {
+            state.activePage = action.payload;
+        }
     },
     extraReducers: {
         [fetchTask.pending]: (state) => {
@@ -140,11 +144,12 @@ export const taskSlice  = createSlice({
     }
 });
 
-
+export const {changeActivePage} = taskSlice.actions;
 
 export const selectTasks = (state: RootState) => state.task.tasks;
 export const selectPageCount = (state: RootState) => state.task.pageCount;
 export const selectIsLoading = (state: RootState) => state.task.isLoading;
 export const selectChangeElement = (state: RootState) => state.task.changeElement;
+export const selectActivePage = (state: RootState) => state.task.activePage;
 
 export default taskSlice.reducer;
