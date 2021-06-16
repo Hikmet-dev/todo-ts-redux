@@ -1,4 +1,4 @@
-import React, {  useState,  useEffect} from  'react';
+import React, {  useState,  useEffect, useCallback} from  'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Grid, List, LinearProgress} from '@material-ui/core';
 import { CreateToDo }  from '../../components/CreateToDo';
@@ -6,7 +6,8 @@ import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
 import {selectOrder, selectFilterBy} from '../filter/filterSlice';
-import { fetchTask, selectTasks, selectIsLoading, selectPageCount, selectChangeElement, selectActivePage, Task, changeActivePage } from './taskSlice';
+import { selectTasks, selectIsLoading, selectPageCount, selectActivePage, Task, Tasks, changeActivePage, addTasks, changeLoadStatus } from './taskSlice';
+import { instance } from '../../instance';
 
 
 export const ToDoList = () => {
@@ -16,32 +17,49 @@ export const ToDoList = () => {
   const tasks = useSelector(selectTasks);
   const isLoading = useSelector(selectIsLoading);
   const pageCount = useSelector(selectPageCount);
-  const changeElement = useSelector(selectChangeElement);
   const activePage = useSelector(selectActivePage);
   const dispatch =useDispatch()
 
-  useEffect(() => {
+  const getTodoList = useCallback( async () => {
     if(sessionStorage.token) {
-      dispatch(fetchTask({
-        order,
-        filterBy,
-        activePage,
-        itemPerPage
-      }))
+      const res = await instance.get<Tasks>('tasks', {params: {
+        order: order,
+        filterBy: filterBy,
+        page: activePage,
+        taskCount: itemPerPage
+      }});
+      await dispatch(addTasks(res.data));
+      dispatch(changeLoadStatus(true));
     }
-  }, [dispatch, changeElement, activePage, order, filterBy, itemPerPage]);
+  }, [dispatch,  order, filterBy, activePage, itemPerPage])
 
 
-  const changeItemPerPageFilter = (e: any) => {
-      setItemPerPage(e.target.value);
-      dispatch(changeActivePage(1))
+  useEffect(() => {
+    getTodoList()
+  }, [getTodoList]);
+
+
+  const changeItemPerPageFilter = (e: React.ChangeEvent<HTMLSelectElement>) => { 
+      setItemPerPage(Number(e.target.value));
+      dispatch(changeActivePage(1));
   };
 
+  const handleNewToDo = async (e: React.KeyboardEvent<HTMLDivElement> | 
+    React.ChangeEvent<HTMLInputElement>) => {
+        const {key} = (e as React.KeyboardEvent<HTMLDivElement>);
+        const {target} = (e as React.ChangeEvent<HTMLInputElement>);
+        if (key === "Enter" && target.value.trim()) {
+            await instance.post('task', {name: target.value, done: false});
+            target.value = '';
+            await getTodoList();
+          }
+  };
+  
   return(
       <Container maxWidth="md">
         <Grid>
         <Grid>
-          <CreateToDo />
+          <CreateToDo handleNewToDo={handleNewToDo} />
           </Grid>
           <FilterPanel  
               onChangeItemFilter={changeItemPerPageFilter}

@@ -10,12 +10,6 @@ export const ToDoListItem = (props: {task: Task} ) => {
   const dispatch = useDispatch();
   const [changeInput, setChangeInput] = useState(false);
   const [disab, setDisab] = useState(false);
-  const showInput = () => {
-    setChangeInput(!changeInput);
-  }; 
-  const buttonDisabled = () => {
-    setDisab(true);
-  };
 
   const changeTask = (e: React.KeyboardEvent<HTMLDivElement> | 
     React.ChangeEvent<HTMLInputElement>) =>  { 
@@ -39,7 +33,7 @@ export const ToDoListItem = (props: {task: Task} ) => {
           color="primary"  
           onChange={(e)=> dispatch(changeDoneStatus({id: e.target.value, done: e.target.checked}))} 
           checked={task.done} 
-          value={task.id} 
+          name={task.id} 
         />
       </ListItemIcon>
       </Grid>
@@ -50,14 +44,14 @@ export const ToDoListItem = (props: {task: Task} ) => {
             defaultValue={task.name}
             autoFocus={true}
             name={task.id}
-            onBlur={() => showInput()} 
+            onBlur={() => setChangeInput(!changeInput)} 
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Escape" && setChangeInput(false)} 
             onKeyPress={e => changeTask(e)}
             onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" &&  setChangeInput(false)}
           />) 
         : (<ListItemText  
             primary={task.name}  
-            onClick={() => showInput()}
+            onClick={() => setChangeInput(!changeInput)}
           />)
       }
       </Grid>
@@ -70,7 +64,7 @@ export const ToDoListItem = (props: {task: Task} ) => {
                       edge="end" 
                       disabled={disab} 
                       aria-label="delete" 
-                      onClick={(e) => {dispatch(deleteTask(e.currentTarget.value)); buttonDisabled()}} 
+                      onClick={(e) => {dispatch(deleteTask(e.currentTarget.value)); setDisab(true);}} 
                       value={task.id}>
                       <DeleteIcon />
                     </IconButton>

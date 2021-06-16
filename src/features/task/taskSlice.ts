@@ -18,40 +18,13 @@ export interface Tasks {
 interface TaskState extends Tasks {
     isLoading: boolean;
     hasError: boolean;
-    changeElement: any;
 };
-
-interface GetParams {
-    order: string;
-    filterBy: string;
-    activePage: string;
-    itemPerPage: number;
-};
-
-export const fetchTask: any = createAsyncThunk(
-    'task/fetchToken',
-    async (params: GetParams) => {
-        const res = await instance.get<Task>('tasks', {params: {
-            order: params.order,
-            filterBy: params.filterBy,
-            page: params.activePage,
-            taskCount: params.itemPerPage
-        }} );
-        return res.data
-    });
-
-export const createTask: any = createAsyncThunk(
-    'task/createTask',
-    async (task: string) => {
-        const res = await instance.post('task', {name: task, done: false});
-        return res.data;
-    }
-);
 
 export const changeTaskName: any = createAsyncThunk(
     'task/changeTaskName',
     async (changingName: {id: string, name: string} ) => {
         const res = await instance.patch(`task/${changingName.id}`, {name: changingName.name});
+        
         return res.data;
     }
 );
@@ -60,6 +33,7 @@ export const changeDoneStatus: any = createAsyncThunk(
     'task/changeDoneStatus',
     async(changingDoneStatus: {id: string, done: boolean}) => {
         const res = await instance.patch(`task/${changingDoneStatus.id}`, {done: changingDoneStatus.done});
+
         return res.data;
     }
 );
@@ -77,8 +51,7 @@ const initialState: TaskState = {
     pageCount: 1,
     activePage:1, 
     isLoading: false,
-    hasError: false,
-    changeElement: null
+    hasError: false
 };
 
 export const taskSlice  = createSlice({
@@ -87,67 +60,55 @@ export const taskSlice  = createSlice({
     reducers: {
         changeActivePage: (state, action: PayloadAction<number>) => {
             state.activePage = action.payload;
-        }
-    },
-    extraReducers: {
-        [fetchTask.pending]: (state) => {
-            state.isLoading = false;
-            state.hasError = false;
         },
-        [fetchTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
+        addTasks: (state, action) => {
             state.tasks = action.payload.tasks;
             state.pageCount = action.payload.pageCount;
-            state.isLoading = true;
-            state.hasError = false;
         },
-        [fetchTask.rejected]: (state) => {
-            state.isLoading = false;
-            state.hasError = true;
-        },
-        [createTask.pending]: (state) => {
-            state.isLoading = true;
-        },
-        [createTask.fulfilled]: (state) => {
-            state.changeElement = !state.changeElement
-        },
-        [createTask.rejected]: (state) => {
-            state.hasError = true
-        },
+        changeLoadStatus: (state, actions) => {
+            state.isLoading = actions.payload;
+        }
+
+    },
+    extraReducers: {
         [changeTaskName.pending]: (state) => {
+
+
         },
         [changeTaskName.fulfilled]: (state) => {
-            state.changeElement = !state.changeElement
+
         },
         [changeTaskName.rejected]: (state) => {
-            state.hasError = true;
+
         },
         [changeDoneStatus.pending]: (state) => {
-            state.isLoading = true;
+
+
         },
         [changeDoneStatus.fulfilled]: (state) => {
-            state.changeElement = !state.changeElement
+
         },
         [changeDoneStatus.rejected]: (state) => {
-            state.hasError = true
+
         },
         [deleteTask.pending]: (state) => {
-            state.isLoading = true;
+
+ 
         },
         [deleteTask.fulfilled]: (state) => {
-            state.changeElement = !state.changeElement
+
         },
         [deleteTask.rejected]: (state)=> {
-            state.hasError = true
+
         }
     }
 });
 
-export const {changeActivePage} = taskSlice.actions;
+export const {changeActivePage, addTasks, changeLoadStatus} = taskSlice.actions;
 
 export const selectTasks = (state: RootState) => state.task.tasks;
 export const selectPageCount = (state: RootState) => state.task.pageCount;
 export const selectIsLoading = (state: RootState) => state.task.isLoading;
-export const selectChangeElement = (state: RootState) => state.task.changeElement;
 export const selectActivePage = (state: RootState) => state.task.activePage;
 
 export default taskSlice.reducer;
