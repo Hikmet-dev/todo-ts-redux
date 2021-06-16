@@ -5,25 +5,27 @@ import { Button, Grid } from '@material-ui/core';
 import { Input } from '../../components/Input';
 import {useDispatch } from 'react-redux';
 import { userRegistration } from '../user/userSlice';
-import { toggleAuthStatus } from './authSlice';
+import { toggleAuthStatus, SignupInterface } from './authSlice';
 
 export const SignUp = () => {
   const dispatch = useDispatch();
+
+  const initialValues: SignupInterface = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: ''
+  }
   return(
         <Formik
-            initialValues={{
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: ''
-            }}
+            initialValues={initialValues}
             validationSchema={Yup.object({
                 firstName: Yup.string().required('Required'),
                 lastName: Yup.string().required('Required'),
                 email: Yup.string().email('Invalid email address').required('Required'),
                 password: Yup.string().min(8, 'Must be 8 characters or more').required('Required')})
             }
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values: SignupInterface, { setSubmitting }) => {
               dispatch(userRegistration(values));
               dispatch(toggleAuthStatus(true))
               setSubmitting(false);

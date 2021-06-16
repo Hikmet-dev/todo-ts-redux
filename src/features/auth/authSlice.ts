@@ -6,6 +6,18 @@ export interface Auth {
     authStatus: boolean;
 };
 
+export interface LoginInterface {
+    email: string;
+    password: string;
+};
+
+export interface SignupInterface {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+}
+
 const initialState: Auth ={ 
     loginForm: true,
     authStatus: false

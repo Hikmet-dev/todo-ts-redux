@@ -1,10 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
-const initialState = {
+
+interface Error {
+    errorStatus: boolean;
+    statusCode: number | null;
+    message: string;
+    errorStack: {};
+}
+
+
+const initialState: Error = {
     errorStatus: false,
-    statusCode: '',
-    errorMesage: '',
+    statusCode: null,
+    message: '',
     errorStack: {}
 }
 
@@ -12,16 +21,15 @@ const errorSlice = createSlice({
     name: 'error',
     initialState,
     reducers: {
-        createError: (state, action: PayloadAction<any>) =>{
+        createError: (state, action: PayloadAction<Error>) =>{
             state.statusCode = action.payload.statusCode;
-            state.errorMesage = action.payload.message;
+            state.message = action.payload.message;
             state.errorStatus = true;
             console.log('createError');
         },
         closeError: (state, action: PayloadAction<any>) => {
-            if(action.payload === 'clickaway') return;
             state.errorStatus = false;
-            state.statusCode = state.errorMesage = '';
+            state.message = state.message = '';
             state.errorStack = {};
         }
     }
@@ -31,7 +39,7 @@ export const { createError, closeError } = errorSlice.actions;
 
 export const selectErrorStatus = (state: RootState) => state.error.errorStatus;
 export const selectErrorStatusCode = (state: RootState) => state.error.statusCode;
-export const selectErrorMesage = (state: RootState) => state.error.errorMesage;
+export const selectErrorMesage = (state: RootState) => state.error.message;
 export const selectErrorStack = (state: RootState) => state.error.errorStack;
 
 export default errorSlice.reducer;

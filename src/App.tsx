@@ -23,9 +23,11 @@ function App() {
 
   useLayoutEffect(() => {
     if(sessionStorage.getItem('token')) {
-      const token: any = jwt.decode(sessionStorage.token.split(' ')[1]);
-      if(Date.now() > token.exp) dispatch(toggleAuthStatus(true));
-      instance.defaults.headers = {'Authorization': sessionStorage.getItem('token')}
+      const token = jwt.decode(sessionStorage.token);
+      if (token !== null) {
+        if(Date.now() > token.split(' ')[1].exp) dispatch(toggleAuthStatus(true));
+        instance.defaults.headers = {'Authorization': sessionStorage.getItem('token')}
+      }
     }
   });
 
