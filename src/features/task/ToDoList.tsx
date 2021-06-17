@@ -5,7 +5,7 @@ import { CreateToDo }  from '../../components/CreateToDo';
 import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
-import { selectTasks, selectIsLoading, selectPageCount, Task,  createTask, fetchTask } from './taskSlice';
+import { selectTasks, selectIsLoading, selectPageCount, Task, fetchTask } from './taskSlice';
 
 export const ToDoList = () => {
   const tasks = useSelector(selectTasks);
@@ -13,28 +13,17 @@ export const ToDoList = () => {
   const pageCount = useSelector(selectPageCount);
   const dispatch = useDispatch()
 
-
   useEffect(() => {
     if(sessionStorage.token) {
       dispatch(fetchTask());
     }
   }, [dispatch]);
 
-  const handleNewToDo = async (e: React.KeyboardEvent<HTMLDivElement> | 
-    React.ChangeEvent<HTMLInputElement>) => {
-        const {key} = (e as React.KeyboardEvent<HTMLDivElement>);
-        const {target} = (e as React.ChangeEvent<HTMLInputElement>);
-        if (key === "Enter" && target.value.trim()) {          
-            dispatch(createTask(target.value));
-            target.value = '';
-          }
-    };
-
   return(
       <Container maxWidth="md">
         <Grid>
           <Grid>
-            <CreateToDo handleNewToDo={handleNewToDo} />
+            <CreateToDo />
           </Grid>
           <FilterPanel />
           <Grid item alignItems="center" container xs={12}>
