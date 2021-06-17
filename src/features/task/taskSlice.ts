@@ -16,10 +16,10 @@ export interface Tasks {
 };
 
 interface TaskState extends Tasks {
-    taskCount: number;
     page: number;
     isLoading: boolean;
     hasError: boolean;
+    taskCount: number;
 };
 
 export interface QueryURL {
@@ -29,7 +29,7 @@ export interface QueryURL {
     taskCount: number;
 };
 
-export const fetchTask: any = createAsyncThunk(
+export const fetchTask = createAsyncThunk(
     'task/fetchTask',
     async(URL, {getState}) => {
         const {filter} = getState() as {filter: Filters};
@@ -45,7 +45,7 @@ export const fetchTask: any = createAsyncThunk(
     }
 )
 
-export const createTask: any = createAsyncThunk<{name: string}, {state: RootState}>(
+export const createTask = createAsyncThunk<Tasks, string, {state: RootState}>(
     'task/createTask',
     async(name , {getState}) => {
         const {filter} = getState() as {filter: Filters};
@@ -62,9 +62,9 @@ export const createTask: any = createAsyncThunk<{name: string}, {state: RootStat
     }
 );
 
-export const changeTask: any = createAsyncThunk(
+export const changeTask = createAsyncThunk<Tasks, {id: string, name?: string, done?: boolean}, {state: RootState} >(
     'task/changeTask',
-    async(changingTask: {id: string, name?: string, done?: boolean}, {getState}) => {
+    async(changingTask, {getState}) => {
         const {filter} = getState() as {filter: Filters};
         const {task} = getState() as {task: TaskState};
 
@@ -85,18 +85,9 @@ export const changeTask: any = createAsyncThunk(
     }
 );
 
-export const changeDoneStatus: any = createAsyncThunk(
-    'task/changeDoneStatus',
-    async(changingDoneStatus: {id: string, done: boolean}) => {
-        const res = await instance.patch(`task/${changingDoneStatus.id}`, {done: changingDoneStatus.done});
-
-        return res.data;
-    }
-);
-
-export const deleteTask: any = createAsyncThunk(
+export const deleteTask = createAsyncThunk<Tasks, string, {state: RootState}>(
     'task/deleteTask',
-    async(taskId: string, {getState}) => {
+    async(taskId, {getState}) => {
         const {filter} = getState() as {filter: Filters};
         const {task} = getState() as {task: TaskState};
 
@@ -120,7 +111,7 @@ const initialState: TaskState = {
     taskCount: 5
 };
 
-export const taskSlice  = createSlice({
+export const taskSlice = createSlice({
     name: 'task',
     initialState,
     reducers: {
@@ -131,56 +122,56 @@ export const taskSlice  = createSlice({
             state.taskCount = action.payload;
         }
     },
-    extraReducers: {
-        [fetchTask.pending]: (state) => {
+    extraReducers: builder => {
+        builder.addCase(fetchTask.pending, (state) => {
             state.isLoading = false;
-        },
-        [fetchTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
+        })
+        builder.addCase(fetchTask.fulfilled, (state, action: PayloadAction<Tasks>) => {
             state.tasks = action.payload.tasks;
             state.pageCount = action.payload.pageCount;
             state.isLoading = true;
-        },
-        [fetchTask.rejected]: (state) => {
+        })
+        builder.addCase(fetchTask.rejected, (state) => {
             state.isLoading = true;
             state.hasError = true;
-        },
-        [createTask.pending]: (state) => {
+        })
+        builder.addCase(createTask.pending, (state) => {
             state.isLoading = true;
-        },
-        [createTask.fulfilled]: (state, action) => {           
+        })
+        builder.addCase(createTask.fulfilled, (state, action) => {           
             state.tasks = action.payload.tasks;
             state.pageCount = action.payload.pageCount;
             state.isLoading = true
             
-        },
-        [createTask.rejected]: (state) => {
+        })
+        builder.addCase(createTask.rejected,  (state) => {
             state.isLoading = true;
             state.hasError = true;
-        },
-        [changeTask.pending]: (state) => {
+        })
+        builder.addCase(changeTask.pending, (state) => {
             state.isLoading = true;
-        },
-        [changeTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
+        })
+        builder.addCase(changeTask.fulfilled, (state, action: PayloadAction<Tasks>) => {
             state.tasks = action.payload.tasks;
             state.pageCount = action.payload.pageCount;
             state.isLoading = true
-        },
-        [changeTask.rejected]: (state)=> {
+        })
+        builder.addCase(changeTask.rejected, (state)=> {
             state.isLoading = true;
             state.hasError = true;
-        },
-        [deleteTask.pending]: (state) => {
+        })
+        builder.addCase(deleteTask.pending, (state) => {
             state.isLoading = true;
-        },
-        [deleteTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
+        })
+        builder.addCase(deleteTask.fulfilled, (state, action: PayloadAction<Tasks>) => {
             state.tasks = action.payload.tasks;
             state.pageCount = action.payload.pageCount;
             state.isLoading = true;
-        },
-        [deleteTask.rejected]: (state)=> {
+        })
+        builder.addCase(deleteTask.rejected, (state)=> {
             state.isLoading = true;
             state.hasError = true;
-        }
+        })
     }
 });
 

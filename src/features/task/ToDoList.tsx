@@ -5,9 +5,7 @@ import { CreateToDo }  from '../../components/CreateToDo';
 import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
-
 import { selectTasks, selectIsLoading, selectPageCount, Task,  createTask, fetchTask } from './taskSlice';
-
 
 export const ToDoList = () => {
   const tasks = useSelector(selectTasks);
@@ -31,22 +29,22 @@ export const ToDoList = () => {
             target.value = '';
           }
     };
+
   return(
       <Container maxWidth="md">
         <Grid>
-        <Grid>
-          <CreateToDo handleNewToDo={handleNewToDo} />
+          <Grid>
+            <CreateToDo handleNewToDo={handleNewToDo} />
           </Grid>
           <FilterPanel />
           <Grid item alignItems="center" container xs={12}>
               {isLoading && (pageCount > 1 && <Pagination />) }
           </Grid>
-          <List>
-      {isLoading
-              ?  (tasks.map((task: Task) => <ToDoListItem key={task.id} task={task} />)) 
-              :   <LinearProgress />
-              }
-          </List>
+          
+          {isLoading
+              ?  (<List>{tasks.map((task: Task) => <ToDoListItem key={task.id} task={task} />)}</List>)
+              :   <LinearProgress />}
+         
         </Grid>
       </Container>
   );

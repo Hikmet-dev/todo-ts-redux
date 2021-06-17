@@ -34,8 +34,7 @@ function App() {
   return (
     <Container>
       <NavBar />
-      {(authStatus && isLoading) && <ToDoList />}
-      {!(authStatus && isLoading) && <Auth />}
+      {(authStatus && isLoading) ? <ToDoList /> : <Auth />}
       <Snackbar
         open={errorStatus}
         autoHideDuration={6000} 
