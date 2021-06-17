@@ -2,6 +2,7 @@ import React from 'react';
 import { ButtonGroup, Button } from '@material-ui/core';
 import {useSelector, useDispatch} from 'react-redux';
 import {selectOrder, selectOrderValue, changeOrder} from '../features/filter/filterSlice';
+import { fetchTask } from '../features/task/taskSlice';
 
 export const DateSort = () =>  {
   const order = useSelector(selectOrder);
@@ -16,7 +17,7 @@ export const DateSort = () =>  {
             key={item}
             size="medium"
             variant={ order === item ? "contained" : undefined}
-            onClick={e => dispatch(changeOrder(e.currentTarget.value))}
+            onClick={e => {dispatch(changeOrder(e.currentTarget.value)); dispatch(fetchTask())}}
             value={item}
             >{item}</Button>)}
     </ButtonGroup>  

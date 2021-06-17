@@ -2,23 +2,28 @@ import React, { useState } from 'react';
 import { ListItemText , ListItem, ListItemIcon, ListItemSecondaryAction, IconButton, Checkbox, Input, Grid } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useDispatch } from 'react-redux';
-import { deleteTask, changeDoneStatus, Task } from './taskSlice';
-import {changeTaskName} from './taskSlice';
-
+import { deleteTask, Task, changeTask } from './taskSlice';
 export const ToDoListItem = (props: {task: Task} ) => {
   const {task} = props;
   const dispatch = useDispatch();
   const [changeInput, setChangeInput] = useState(false);
   const [disab, setDisab] = useState(false);
 
-  const changeTask = (e: React.KeyboardEvent<HTMLDivElement> | 
-    React.ChangeEvent<HTMLInputElement>) =>  { 
+  const changeTaskName = (e: React.KeyboardEvent<HTMLElement> | 
+    React.ChangeEvent<HTMLElement>) =>  { 
       const {key} = (e as React.KeyboardEvent<HTMLDivElement>);
       const {target} = (e as React.ChangeEvent<HTMLInputElement>);
       if (key === 'Enter' && target.value.trim()){
-        dispatch(changeTaskName({id: target.name, name: target.value}));
+        dispatch(changeTask({id: target.name, name: target.value}))
       }
   };
+
+  const changeDoneStatus = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const {target} = (e as React.ChangeEvent<HTMLInputElement>);
+      if(typeof target.checked=== 'boolean') {
+        dispatch(changeTask({id: target.name, done: target.checked}));
+      }
+    };
 
   const date = task.createdAt.match(/([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/);
   const time = task.createdAt.match(/T(((([0-1][0-9])|(2[0-3])):?[0-5][0-9]))/g);
@@ -30,10 +35,11 @@ export const ToDoListItem = (props: {task: Task} ) => {
       <Grid item xs={1}>
       <ListItemIcon>
         <Checkbox 
-          color="primary"  
-          onChange={(e)=> dispatch(changeDoneStatus({id: e.target.value, done: e.target.checked}))} 
+          color="primary"
+          name={task.id}  
+          onChange={(e)=> changeDoneStatus(e)} 
           checked={task.done} 
-          name={task.id} 
+          value={task.id} 
         />
       </ListItemIcon>
       </Grid>
@@ -46,7 +52,7 @@ export const ToDoListItem = (props: {task: Task} ) => {
             name={task.id}
             onBlur={() => setChangeInput(!changeInput)} 
             onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Escape" && setChangeInput(false)} 
-            onKeyPress={e => changeTask(e)}
+            onKeyPress={e => changeTaskName(e)}
             onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" &&  setChangeInput(false)}
           />) 
         : (<ListItemText  

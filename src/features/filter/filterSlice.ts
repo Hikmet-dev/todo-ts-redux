@@ -1,9 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
+export interface Filters {
+    filterByButtons: string[];
+    filterBy: string;
+    orderValue: string[];
+    order: string;
+}
 
 
-const initialState = {
+
+const initialState: Filters = {
     filterByButtons: ['all', 'done', 'undone'],
     filterBy: 'all',
     orderValue: ['ASC', 'DESC'],

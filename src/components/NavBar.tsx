@@ -5,8 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import {toggleLoginForm, selectLoginForm,  logOut, selectAuthStatus} from '../features/auth/authSlice';
 import {selectLastName, selectFirstName, clearUserData, selectIsLoading} from '../features/user/userSlice';
 
-
-
 const useStyles = makeStyles((theme) => ({
     root: {
       justifyContent: 'space-between'
@@ -18,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
       flexGrow: 1,
     },
   }));
-
 
 export const NavBar = () => {
 const LoginForm = useSelector(selectLoginForm);
@@ -59,9 +56,5 @@ const LoginForm = useSelector(selectLoginForm);
       </Toolbar>
     </AppBar>
     </div>
-
   )
-
-
 };
-

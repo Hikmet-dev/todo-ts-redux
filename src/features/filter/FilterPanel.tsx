@@ -36,7 +36,7 @@ export const FilterPanel = ({onChangeItemFilter, itemPerPage}: any) => {
       </Grid>
       <Grid item xs={3} alignItems="center" container>
         <Typography variant="subtitle1">Page count</Typography>
-        <ItemPerPageFilter  onChangeItemFilter={onChangeItemFilter} itemPerPage={itemPerPage}/>
+        <ItemPerPageFilter />
       </Grid>
     </Grid>
     </div>

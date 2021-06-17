@@ -3,19 +3,17 @@ import { ButtonGroup, Button } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { useSelector, useDispatch } from 'react-redux';
-import { changeActivePage, selectPageCount, selectActivePage } from '../features/task/taskSlice';
-
-
-
+import { changeActivePage, selectPageCount, selectPage, fetchTask } from '../features/task/taskSlice';
 
 export const  Pagination = () =>  {
     const dispatch = useDispatch();
-    const activePage = useSelector(selectActivePage);
+    const activePage = useSelector(selectPage);
     const pageCount = useSelector(selectPageCount);
     const pageArr = new Array(pageCount).fill(1).map((e, i) => i + 1);
     const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         if (typeof e.currentTarget.value === 'string') {
-            dispatch(changeActivePage(Number(e.currentTarget.value)))
+            dispatch(changeActivePage(Number(e.currentTarget.value)));
+            dispatch(fetchTask());
         }
     };
     return (

@@ -1,6 +1,7 @@
-import { RootState } from './../../app/store';
+import { RootState} from './../../app/store';
 import { createAsyncThunk, PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { instance } from '../../instance';
+import { Filters } from '../filter/filterSlice';
 
 export interface Task {
         id: string;
@@ -12,20 +13,75 @@ export interface Task {
 export interface Tasks {
     tasks: Task[];
     pageCount: number;
-    activePage: number;
 };
 
 interface TaskState extends Tasks {
+    taskCount: number;
+    page: number;
     isLoading: boolean;
     hasError: boolean;
 };
 
-export const changeTaskName: any = createAsyncThunk(
-    'task/changeTaskName',
-    async (changingName: {id: string, name: string} ) => {
-        const res = await instance.patch(`task/${changingName.id}`, {name: changingName.name});
-        
+export interface QueryURL {
+    order: string;
+    filterBy: string;
+    page: number;
+    taskCount: number;
+};
+
+export const fetchTask: any = createAsyncThunk(
+    'task/fetchTask',
+    async(URL, {getState}) => {
+        const {filter} = getState() as {filter: Filters};
+        const {task} = getState() as {task: TaskState}
+        const res = await instance.get('tasks', 
+        {params: {
+            order: filter.order,
+            filterBy: filter.filterBy,
+            page: task.page,
+            taskCount: task.taskCount
+        }});
         return res.data;
+    }
+)
+
+export const createTask: any = createAsyncThunk<{name: string}, {state: RootState}>(
+    'task/createTask',
+    async(name , {getState}) => {
+        const {filter} = getState() as {filter: Filters};
+        const {task} = getState() as {task: TaskState}
+
+        const res = await instance.post('task', {name: name}, {params: {
+            order: filter.order,
+            filterBy: filter.filterBy,
+            page: task.page,
+            taskCount: task.taskCount
+        }}
+        );        
+        return res.data;
+    }
+);
+
+export const changeTask: any = createAsyncThunk(
+    'task/changeTask',
+    async(changingTask: {id: string, name?: string, done?: boolean}, {getState}) => {
+        const {filter} = getState() as {filter: Filters};
+        const {task} = getState() as {task: TaskState};
+
+        let putshData;
+        if(changingTask.name)  putshData = {name: changingTask.name};
+        if(typeof changingTask.done === 'boolean') putshData = {done: changingTask.done} ;
+
+
+        const res = await instance.patch(`task/${changingTask.id}`,
+            putshData,
+            {params: {
+                order: filter.order,
+                filterBy: filter.filterBy,
+                page: task.page,
+                taskCount: task.taskCount
+            }});
+            return res.data;
     }
 );
 
@@ -39,9 +95,18 @@ export const changeDoneStatus: any = createAsyncThunk(
 );
 
 export const deleteTask: any = createAsyncThunk(
-    'task/deketetask',
-    async(taskId: string) => {
-        const res = await instance.delete(`task/${taskId}`);
+    'task/deleteTask',
+    async(taskId: string, {getState}) => {
+        const {filter} = getState() as {filter: Filters};
+        const {task} = getState() as {task: TaskState};
+
+        const res = await instance.delete(`task/${taskId}`, 
+        {params: {
+            order: filter.order,
+            filterBy: filter.filterBy,
+            page: task.page,
+            taskCount: task.taskCount
+        }});
         return res.data;
     }
 );
@@ -49,9 +114,10 @@ export const deleteTask: any = createAsyncThunk(
 const initialState: TaskState = {
     tasks: [],
     pageCount: 1,
-    activePage:1, 
+    page: 1, 
     isLoading: false,
-    hasError: false
+    hasError: false,
+    taskCount: 5
 };
 
 export const taskSlice  = createSlice({
@@ -59,56 +125,71 @@ export const taskSlice  = createSlice({
     initialState,
     reducers: {
         changeActivePage: (state, action: PayloadAction<number>) => {
-            state.activePage = action.payload;
+            state.page = action.payload;
         },
-        addTasks: (state, action) => {
-            state.tasks = action.payload.tasks;
-            state.pageCount = action.payload.pageCount;
-        },
-        changeLoadStatus: (state, actions) => {
-            state.isLoading = actions.payload;
+        changeTaskCount: (state, action: PayloadAction<number>) => {
+            state.taskCount = action.payload;
         }
-
     },
     extraReducers: {
-        [changeTaskName.pending]: (state) => {
-
-
+        [fetchTask.pending]: (state) => {
+            state.isLoading = false;
         },
-        [changeTaskName.fulfilled]: (state) => {
-
+        [fetchTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
+            state.tasks = action.payload.tasks;
+            state.pageCount = action.payload.pageCount;
+            state.isLoading = true;
         },
-        [changeTaskName.rejected]: (state) => {
-
+        [fetchTask.rejected]: (state) => {
+            state.isLoading = true;
+            state.hasError = true;
         },
-        [changeDoneStatus.pending]: (state) => {
-
-
+        [createTask.pending]: (state) => {
+            state.isLoading = true;
         },
-        [changeDoneStatus.fulfilled]: (state) => {
-
+        [createTask.fulfilled]: (state, action) => {           
+            state.tasks = action.payload.tasks;
+            state.pageCount = action.payload.pageCount;
+            state.isLoading = true
+            
         },
-        [changeDoneStatus.rejected]: (state) => {
-
+        [createTask.rejected]: (state) => {
+            state.isLoading = true;
+            state.hasError = true;
+        },
+        [changeTask.pending]: (state) => {
+            state.isLoading = true;
+        },
+        [changeTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
+            state.tasks = action.payload.tasks;
+            state.pageCount = action.payload.pageCount;
+            state.isLoading = true
+        },
+        [changeTask.rejected]: (state)=> {
+            state.isLoading = true;
+            state.hasError = true;
         },
         [deleteTask.pending]: (state) => {
-
- 
+            state.isLoading = true;
         },
-        [deleteTask.fulfilled]: (state) => {
-
+        [deleteTask.fulfilled]: (state, action: PayloadAction<Tasks>) => {
+            state.tasks = action.payload.tasks;
+            state.pageCount = action.payload.pageCount;
+            state.isLoading = true;
         },
         [deleteTask.rejected]: (state)=> {
-
+            state.isLoading = true;
+            state.hasError = true;
         }
     }
 });
 
-export const {changeActivePage, addTasks, changeLoadStatus} = taskSlice.actions;
+export const {changeActivePage, changeTaskCount} = taskSlice.actions;
 
 export const selectTasks = (state: RootState) => state.task.tasks;
 export const selectPageCount = (state: RootState) => state.task.pageCount;
 export const selectIsLoading = (state: RootState) => state.task.isLoading;
-export const selectActivePage = (state: RootState) => state.task.activePage;
+export const selectPage = (state: RootState) => state.task.page;
+export const selectTaskCount = (state: RootState) => state.task.taskCount;
 
 export default taskSlice.reducer;

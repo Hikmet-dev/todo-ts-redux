@@ -12,7 +12,6 @@ import { closeError, selectErrorStatus, selectErrorStatusCode, selectErrorMesage
 import {toggleAuthStatus} from './features/auth/authSlice';
 import * as jwt from 'jsonwebtoken';
 
-
 function App() {
   const authStatus = useSelector(selectAuthStatus);
   const isLoading = useSelector(selectIsLoading);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { TextField } from '@material-ui/core';
 
-
 export const  CreateToDo = (props: any) =>  {
     const {handleNewToDo} = props;
     return (
@@ -16,4 +15,4 @@ export const  CreateToDo = (props: any) =>  {
         onKeyPress={e =>handleNewToDo(e)} 
         />
         )
-}
+};
