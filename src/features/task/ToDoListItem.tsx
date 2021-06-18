@@ -3,8 +3,11 @@ import { ListItemText , ListItem, ListItemIcon, ListItemSecondaryAction, IconBut
 import DeleteIcon from '@material-ui/icons/Delete';
 import { useDispatch } from 'react-redux';
 import { deleteTask, Task, changeTask } from './taskSlice';
-export const ToDoListItem = (props: {task: Task} ) => {
-  const {task} = props;
+import { DraggableProvided } from 'react-beautiful-dnd';
+
+
+export const ToDoListItem = (props: {task: Task, provided: DraggableProvided} ) => {
+  const {task, provided} = props;
   const dispatch = useDispatch();
   const [changeInput, setChangeInput] = useState(false);
   const [disab, setDisab] = useState(false);
@@ -31,7 +34,7 @@ export const ToDoListItem = (props: {task: Task} ) => {
 
  return(
    <Grid container>
-    <ListItem>
+    <ListItem {...provided.draggableProps} {...provided.dragHandleProps} innerRef={provided.innerRef} >
       <Grid item xs={1}>
       <ListItemIcon>
         <Checkbox 

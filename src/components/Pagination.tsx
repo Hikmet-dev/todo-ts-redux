@@ -10,6 +10,7 @@ export const  Pagination = () =>  {
     const activePage = useSelector(selectPage);
     const pageCount = useSelector(selectPageCount);
     const pageArr = new Array(pageCount).fill(1).map((e, i) => i + 1);
+
     const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         if (typeof e.currentTarget.value === 'string') {
             dispatch(changeActivePage(Number(e.currentTarget.value)));

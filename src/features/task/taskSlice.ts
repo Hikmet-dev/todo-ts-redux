@@ -120,6 +120,9 @@ export const taskSlice = createSlice({
         },
         changeTaskCount: (state, action: PayloadAction<number>) => {
             state.taskCount = action.payload;
+        },
+        updateTasksList: (state, action) => {
+            state.tasks = action.payload;
         }
     },
     extraReducers: builder => {
@@ -175,7 +178,7 @@ export const taskSlice = createSlice({
     }
 });
 
-export const {changeActivePage, changeTaskCount} = taskSlice.actions;
+export const {changeActivePage, changeTaskCount, updateTasksList} = taskSlice.actions;
 
 export const selectTasks = (state: RootState) => state.task.tasks;
 export const selectPageCount = (state: RootState) => state.task.pageCount;

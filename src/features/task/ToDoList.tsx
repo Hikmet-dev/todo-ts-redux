@@ -1,11 +1,20 @@
-import React, { useEffect} from  'react';
+import React, { useEffect } from  'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Grid, List, LinearProgress} from '@material-ui/core';
 import { CreateToDo }  from '../../components/CreateToDo';
 import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
-import { selectTasks, selectIsLoading, selectPageCount, Task, fetchTask } from './taskSlice';
+import { selectTasks, selectIsLoading, selectPageCount, Task, fetchTask, updateTasksList } from './taskSlice';
+import { DragDropContext, Draggable, DragUpdate, Droppable } from 'react-beautiful-dnd';
+
+type DropReason = 'DROP' | 'CANCEL';
+
+interface DropResult extends DragUpdate  {
+  reason: DropReason
+};
+
+
 
 export const ToDoList = () => {
   const tasks = useSelector(selectTasks);
@@ -19,6 +28,14 @@ export const ToDoList = () => {
     }
   }, [dispatch]);
 
+  const handleDragEnd = (result: DropResult) => {
+    if(!result.destination) return;
+    const items = Array.from(tasks);
+    const [reorderingItem] = items.splice(result.source.index, 1); 
+    items.splice(result.destination!.index, 0, reorderingItem)
+    dispatch(updateTasksList(items));
+  };
+
   return(
       <Container maxWidth="md">
         <Grid>
@@ -31,7 +48,21 @@ export const ToDoList = () => {
           </Grid>
           
           {isLoading
-              ?  (<List>{tasks.map((task: Task) => <ToDoListItem key={task.id} task={task} />)}</List>)
+              ?  (<DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="characters">
+                          {(provided) => (
+                          <List className='characters' {...provided.droppableProps} innerRef={provided.innerRef}>
+                          {tasks.map((task: Task, index: number) => 
+                            (<Draggable key={task.id} draggableId={task.id} index={index}>
+                              {(provided) => (
+                                <ToDoListItem  task={task} provided={provided} />
+                              )}
+                            </Draggable>))}
+                            {provided.placeholder}
+                          </List>
+                          )}
+                    </Droppable>
+                    </DragDropContext>)
               :   <LinearProgress />}
          
         </Grid>
