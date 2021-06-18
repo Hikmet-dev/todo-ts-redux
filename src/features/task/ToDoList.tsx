@@ -6,14 +6,7 @@ import { Pagination } from '../../components/Pagination';
 import { ToDoListItem } from './ToDoListItem';
 import { FilterPanel } from '../filter/FilterPanel';
 import { selectTasks, selectIsLoading, selectPageCount, Task, fetchTask, updateTasksList } from './taskSlice';
-import { DragDropContext, Draggable, DragUpdate, Droppable } from 'react-beautiful-dnd';
-
-type DropReason = 'DROP' | 'CANCEL';
-
-interface DropResult extends DragUpdate  {
-  reason: DropReason
-};
-
+import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd';
 
 
 export const ToDoList = () => {

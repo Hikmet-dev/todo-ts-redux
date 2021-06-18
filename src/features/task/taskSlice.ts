@@ -123,6 +123,7 @@ export const taskSlice = createSlice({
         },
         updateTasksList: (state, action) => {
             state.tasks = action.payload;
+            
         }
     },
     extraReducers: builder => {
